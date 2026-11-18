@@ -5,32 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Método de la secante · Métodos Numéricos UDES</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>try{var t=localStorage.getItem('tema');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')}catch(e){}</script>
-<script>
-  window.MathJax = {
-    tex: {
-      inlineMath: [['$', '$'], ['\\(', '\\)']],
-      displayMath: [['$$', '$$'], ['\\[', '\\]']]
-    },
-    options: {
-      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-    }
-  };
-</script>
-<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <style>
-:root{--ink:#11275c;--mu:#5d6a8c;--blue:#2c5be0;--blue2:#5b8cff;--acc:#2c5be0;--sky:#cfe0ff;--bad:#b0402b;--gold:#a87a00;
- --bg:linear-gradient(160deg,#faf5ea,#efe3cc 55%,#e8d7b6);--glass:rgba(255,255,255,.42);--edge:rgba(255,255,255,.75);--field:rgba(255,255,255,.62);
- --hi:rgba(255,255,255,.9);--sh:rgba(17,39,92,.12);--line:rgba(17,39,92,.12);--blob:.7;
- --serif:"Source Serif 4",Georgia,serif;--sans:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;--r:20px}
-[data-theme=dark]{--ink:#f1e7d2;--mu:#a3afcc;--acc:#8db0ff;--sky:#2b4a8f;--bad:#ff9a85;--gold:#e6bf5a;
+:root{--ink:#11275c;--mu:#56638a;--blue:#2c5be0;--blue2:#5b8cff;--acc:#2c5be0;--sky:#cfe0ff;--bad:#b0402b;--gold:#a87a00;
+ --bg:linear-gradient(160deg,#faf5ea,#efe3cc 55%,#e8d7b6);--glass:rgba(255,255,255,.46);--edge:rgba(255,255,255,.78);--field:rgba(255,255,255,.66);
+ --hi:rgba(255,255,255,.9);--sh:rgba(17,39,92,.12);--line:rgba(17,39,92,.13);--blob:.65;
+ --serif:"Source Serif 4",Georgia,"Times New Roman",serif;--sans:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;--mono:ui-monospace,Menlo,Consolas,monospace;--r:18px}
+[data-theme=dark]{--ink:#f1e7d2;--mu:#a9b4d0;--acc:#8db0ff;--sky:#2b4a8f;--bad:#ff9a85;--gold:#e6bf5a;
  --bg:linear-gradient(160deg,#08112a,#0d1b3d 55%,#14254d);--glass:rgba(255,255,255,.07);--edge:rgba(255,255,255,.2);--field:rgba(255,255,255,.08);
- --hi:rgba(255,255,255,.28);--sh:rgba(0,0,0,.4);--line:rgba(241,231,210,.14);--blob:.45}
+ --hi:rgba(255,255,255,.28);--sh:rgba(0,0,0,.4);--line:rgba(241,231,210,.15);--blob:.45}
 *{box-sizing:border-box}
 html{background:#efe3cc}
-body{margin:0;min-height:100vh;color:var(--ink);background:var(--bg);font:400 15px/1.5 var(--sans);position:relative;overflow-x:hidden;transition:background .4s,color .3s}
+body{margin:0;min-height:100vh;color:var(--ink);background:var(--bg);font:400 14.5px/1.5 var(--sans);font-variant-numeric:tabular-nums lining-nums;-webkit-font-smoothing:antialiased;position:relative;overflow-x:hidden;transition:background .4s,color .3s}
 .blob{position:fixed;border-radius:50%;filter:blur(80px);z-index:0;pointer-events:none;opacity:var(--blob);animation:flota 18s ease-in-out infinite alternate}
 .b1{width:420px;height:420px;background:#5b8cff;top:-120px;right:-80px}
 .b2{width:340px;height:340px;background:#3f6ee8;bottom:-60px;left:-100px;animation-delay:-6s}
@@ -43,22 +33,23 @@ body{margin:0;min-height:100vh;color:var(--ink);background:var(--bg);font:400 15
 .rise{animation:sube .5s cubic-bezier(.2,.8,.2,1) both}
 @keyframes sube{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.logo{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#fff;font:700 1.4rem var(--serif);background:linear-gradient(145deg,var(--blue2),var(--blue));box-shadow:0 6px 16px rgba(44,91,224,.4),inset 0 1.5px 0 rgba(255,255,255,.5)}
-h1{font:700 1.3rem/1.15 var(--serif);margin:0}
-.sub{margin:1px 0 0;color:var(--mu);font-size:.85rem}
-h2{font:600 1rem var(--serif);margin:0 0 8px}
+.logo{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;font:600 1.45rem var(--serif);background:linear-gradient(145deg,var(--blue2),var(--blue));box-shadow:0 6px 16px rgba(44,91,224,.4),inset 0 1.5px 0 rgba(255,255,255,.5)}
+h1{font:600 1.4rem/1.15 var(--serif);letter-spacing:-.01em;margin:0}
+.sub{margin:2px 0 0;color:var(--mu);font-size:.82rem}
 .sp{flex:1}
 .app{display:grid;gap:14px;grid-template-columns:340px 1fr}
 .side{display:flex;flex-direction:column;gap:11px;align-self:start}
 .main{display:flex;flex-direction:column;gap:14px;min-width:0}
 @media(min-width:1000px){.app{height:calc(100vh - 92px);min-height:560px;grid-template-rows:minmax(0,1fr)}.side{height:100%;overflow-y:auto}.main{height:100%}.charts,.tabs{min-height:0}}
 @media(max-width:999px){.app{grid-template-columns:1fr}}
-label{display:block;font-weight:500;font-size:.76rem;color:var(--mu);margin:0 0 3px 3px}
-input{width:100%;padding:9px 12px;border-radius:12px;border:1px solid var(--edge);background:var(--field);color:var(--ink);font:500 .95rem var(--mono);transition:box-shadow .2s,transform .2s}
+label{display:block;font-weight:500;font-size:.76rem;color:var(--mu);margin:0 0 4px 2px}
+label .katex{font-size:1.18em}
+input{width:100%;padding:9px 12px;border-radius:11px;border:1px solid var(--edge);background:var(--field);color:var(--ink);font:500 .95rem var(--sans);font-variant-numeric:tabular-nums;transition:box-shadow .2s,transform .2s}
+#expr{font-family:var(--mono);font-size:.9rem}
 input:focus{outline:none;box-shadow:0 0 0 3px var(--sky),0 6px 16px var(--sh);transform:translateY(-1px)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .hide{display:none!important}
-button{position:relative;overflow:hidden;border:0;cursor:pointer;font:600 .9rem var(--sans);padding:10px 18px;border-radius:13px;color:#fff;background:linear-gradient(145deg,var(--blue2),var(--blue));
+button{position:relative;overflow:hidden;border:0;cursor:pointer;font:600 .88rem var(--sans);padding:10px 18px;border-radius:12px;color:#fff;background:linear-gradient(145deg,var(--blue2),var(--blue));
  box-shadow:0 7px 18px rgba(44,91,224,.38),inset 0 1.5px 0 rgba(255,255,255,.45);transition:transform .25s cubic-bezier(.3,1.5,.5,1),box-shadow .25s,background .3s}
 button::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);transition:left .6s}
 button:hover{transform:translateY(-2px) scale(1.03)}button:hover::after{left:130%}
@@ -70,40 +61,43 @@ button.ghost,.chipb{color:var(--ink);background:var(--field);border:1px solid va
 button.cargando{pointer-events:none}
 button.cargando::before{content:"";display:inline-block;width:13px;height:13px;margin-right:8px;vertical-align:-2px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:gira .7s linear infinite}
 @keyframes gira{to{transform:rotate(360deg)}}
-.theme{width:42px;height:42px;padding:0;border-radius:50%;font-size:1.15rem;display:grid;place-items:center}
+.theme{width:40px;height:40px;padding:0;border-radius:50%;font-size:1.1rem;display:grid;place-items:center}
 .modos{display:flex;padding:4px;border-radius:999px;background:var(--field);border:1px solid var(--edge);position:relative}
 .modos button{flex:1;background:none;box-shadow:none;color:var(--mu);z-index:1;padding:8px 10px}.modos button.on{color:#fff}
 .pill{position:absolute;top:4px;bottom:4px;left:4px;border-radius:999px;background:linear-gradient(145deg,var(--blue2),var(--blue));box-shadow:0 4px 12px rgba(44,91,224,.4);transition:transform .35s cubic-bezier(.3,1.3,.4,1),width .35s}
-.display{background:var(--field);border:1px solid var(--edge);border-radius:14px;padding:10px 14px;box-shadow:inset 0 2px 8px var(--sh)}
-.display small{display:block;color:var(--mu);font-size:.72rem}.eqv{font:500 .98rem var(--mono);white-space:normal;overflow-wrap:anywhere}
+.display{background:var(--field);border:1px solid var(--edge);border-radius:13px;padding:9px 12px;box-shadow:inset 0 2px 8px var(--sh)}
+.display small{display:block;color:var(--mu);font-size:.72rem}
+.eqv{font-size:.95rem;overflow-x:auto;overflow-y:hidden;padding:2px 0}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chipb{padding:5px 11px;font:500 .8rem var(--mono);border-radius:999px;box-shadow:none}
-.chipb.mine{border-color:var(--acc)}
-.chipb .x{margin-left:6px;opacity:.6}
-.answer{display:flex;gap:18px;align-items:center;flex-wrap:wrap;padding:14px 18px}
-.big{font:600 clamp(1.9rem,3.4vw,2.7rem) var(--mono);color:var(--acc);letter-spacing:-.03em;line-height:1.1}
+.chipb{padding:5px 11px;font:500 .78rem var(--sans);border-radius:999px;box-shadow:none}
+.chipb.mine{border-color:var(--acc)}.chipb .x{margin-left:6px;opacity:.6}
+.answer{display:flex;gap:22px;align-items:center;flex-wrap:wrap;padding:14px 20px}
+.big{font:600 clamp(2rem,3.4vw,2.8rem) var(--serif);color:var(--acc);letter-spacing:-.01em;line-height:1.1;font-variant-numeric:lining-nums tabular-nums}
 .mu{color:var(--mu);font-size:.8rem}
-.chip{display:inline-block;padding:5px 12px;border-radius:999px;font-weight:600;font-size:.8rem;background:rgba(91,140,255,.18);color:var(--acc)}.chip.mal{background:rgba(220,90,60,.18);color:var(--bad)}
+.chip{display:inline-block;padding:4px 12px;border-radius:999px;font-weight:600;font-size:.78rem;background:rgba(91,140,255,.18);color:var(--acc)}.chip.mal{background:rgba(220,90,60,.18);color:var(--bad)}
 .err{border-color:var(--bad);color:var(--bad);font-weight:500}
-.charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1.15}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1.1}
 @media(max-width:700px){.charts{grid-template-columns:1fr}}
 .cbox{display:flex;flex-direction:column;padding:12px 14px}
 .ch{position:relative;flex:1;min-height:210px}
 .tabs{flex:1;display:flex;flex-direction:column;padding:10px 14px 12px}
 .tabbar{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:8px}
-.tab{background:none;box-shadow:none;color:var(--mu);border-radius:10px 10px 0 0;padding:8px 14px;font-weight:600}
+.tab{background:none;box-shadow:none;color:var(--mu);border-radius:10px 10px 0 0;padding:8px 14px}
 .tab.on{color:var(--acc);box-shadow:inset 0 -3px 0 var(--acc)}.tab:hover{transform:none}.tab::after{display:none}
 .pane{flex:1;overflow:auto;min-height:150px}
 details{border-radius:12px;background:var(--field);border:1px solid var(--edge);margin-bottom:7px}
-summary{list-style:none;cursor:pointer;padding:9px 13px;font-weight:600;display:flex;justify-content:space-between;gap:10px}summary::-webkit-details-marker{display:none}
+summary{list-style:none;cursor:pointer;padding:9px 13px;display:flex;justify-content:space-between;align-items:center;gap:10px}summary::-webkit-details-marker{display:none}
+summary b{font:600 .92rem var(--serif)}
 summary::after{content:"＋";color:var(--acc);transition:transform .3s}details[open] summary::after{transform:rotate(135deg)}
-.paso{padding:0 13px 11px;font:.8rem/1.85 var(--mono);overflow-x:auto;white-space:nowrap;animation:sube .3s both}.paso b{color:var(--acc)}
-table{border-collapse:collapse;width:100%;font:.82rem var(--mono)}
+.paso{padding:0 12px 8px;animation:sube .3s both}
+.paso .katex-display{margin:.45em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.paso .katex{font-size:1.04em}
+table{border-collapse:collapse;width:100%;font:.84rem var(--sans);font-variant-numeric:tabular-nums}
 th,td{padding:6px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
-th{font:600 .75rem var(--sans);color:var(--mu);position:sticky;top:0;background:var(--glass);backdrop-filter:blur(10px)}
+th{font-weight:500;color:var(--mu);position:sticky;top:0;background:var(--glass);backdrop-filter:blur(10px)}
 tbody tr:hover{background:var(--field)}
 .cmp{display:grid;grid-template-columns:90px 1fr 46px;gap:10px;align-items:center;margin-bottom:12px;font-size:.88rem}
-.cmp.sel .nm{color:var(--acc);font-weight:600}.v{font:600 .88rem var(--mono);text-align:right}
+.cmp.sel .nm{color:var(--acc);font-weight:600}.v{font-weight:600;text-align:right}
 .barra{height:9px;border-radius:99px;background:linear-gradient(90deg,var(--blue2),var(--blue));transform-origin:left;animation:crece .9s cubic-bezier(.2,.8,.2,1) both}
 @keyframes crece{from{transform:scaleX(0)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -114,7 +108,7 @@ tbody tr:hover{background:var(--field)}
 <div class="shell">
 <div class="top rise">
   <div class="logo">∂</div>
-  <div><h1>Método de la secante</h1><p class="sub">Solución de f(x) = 0 sin derivadas · Métodos Numéricos, UDES</p></div>
+  <div><h1>Método de la secante</h1><p class="sub">Solución de ecuaciones no lineales implícitas · Métodos Numéricos, UDES</p></div>
   <span class="sp"></span>
   <button class="theme ghost" id="theme" type="button" aria-label="Cambiar entre modo claro y oscuro" title="Modo claro / oscuro">☾</button>
 </div>
@@ -125,19 +119,19 @@ tbody tr:hover{background:var(--field)}
     <div class="modos"><span class="pill" id="pill"></span><button type="button" id="mCole" class="on">Colebrook-White</button><button type="button" id="mLibre">Mis funciones</button></div>
     <div class="display"><small>Ecuación a resolver</small><div class="eqv" id="eqv"></div></div>
     <div id="colebrook" class="g2">
-      <div><label for="re">Reynolds (Re)</label><input id="re" value="150000" inputmode="decimal"></div>
-      <div><label for="rug">Rugosidad ε/D</label><input id="rug" value="0.0004" inputmode="decimal"></div>
+      <div><label for="re">Reynolds <span data-tex="(Re)"></span></label><input id="re" value="150000" inputmode="decimal"></div>
+      <div><label for="rug">Rugosidad <span data-tex="\tfrac{\varepsilon}{D}"></span></label><input id="rug" value="0.0004" inputmode="decimal"></div>
     </div>
     <div id="libre" class="hide" style="display:flex;flex-direction:column;gap:9px">
       <div><label>Funciones predeterminadas</label><div class="chips" id="presets"></div></div>
       <div class="hide" id="minebox"><label>Mis funciones guardadas</label><div class="chips" id="mine"></div></div>
-      <div><label for="expr">Escribe tu f(x) · x, + − * / ^, sin, cos, tan, exp, ln, sqrt, pi</label><input id="expr" value="x^3 - 2*x - 5" spellcheck="false" autocomplete="off"></div>
+      <div><label for="expr">Escribe tu <span data-tex="f(x)"></span> · usa x, + − * / ^, sin, cos, tan, exp, ln, sqrt, pi</label><input id="expr" value="x^3 - 2*x - 5" spellcheck="false" autocomplete="off"></div>
       <button class="ghost" id="save" type="button">Guardar esta función</button>
     </div>
     <div class="g2">
-      <div><label for="x0">x₀</label><input id="x0" value="0.015" inputmode="decimal"></div>
-      <div><label for="x1">x₁</label><input id="x1" value="0.030" inputmode="decimal"></div>
-      <div><label for="es">Tolerancia εs (%)</label><input id="es" value="1e-6" inputmode="decimal"></div>
+      <div><label for="x0"><span data-tex="x_0"></span></label><input id="x0" value="0.015" inputmode="decimal"></div>
+      <div><label for="x1"><span data-tex="x_1"></span></label><input id="x1" value="0.030" inputmode="decimal"></div>
+      <div><label for="es">Tolerancia <span data-tex="\varepsilon_s\,(\%)"></span></label><input id="es" value="1e-6" inputmode="decimal"></div>
       <div><label for="nmax">Iteraciones máx.</label><input id="nmax" value="100" inputmode="numeric"></div>
     </div>
     <button id="go" type="button">Resolver</button>
@@ -148,57 +142,73 @@ tbody tr:hover{background:var(--field)}
  <section class="main hide" id="out">
   <div class="glass answer rise">
     <div><div class="mu" id="lbl">Raíz aproximada</div><div class="big" id="raiz">0</div></div>
-    <div><span class="chip" id="estado"></span><div class="mu" id="orden" style="margin-top:6px"></div><div class="mu">Residuo |g| = <span id="resid"></span></div></div>
+    <div><span class="chip" id="estado"></span><div class="mu" id="orden" style="margin-top:6px"></div><div class="mu"><span data-tex="\left|g(r)\right| ="></span> <span id="resid"></span></div></div>
   </div>
   <div class="charts">
     <div class="glass cbox rise"><div class="mu">Aproximación geométrica: primeras rectas secantes</div><div class="ch"><canvas id="cgeo"></canvas></div></div>
-    <div class="glass cbox rise"><div class="mu">Error relativo εa por iteración (escala logarítmica)</div><div class="ch"><canvas id="cerr"></canvas></div></div>
+    <div class="glass cbox rise"><div class="mu">Error relativo aproximado por iteración (escala logarítmica)</div><div class="ch"><canvas id="cerr"></canvas></div></div>
   </div>
   <div class="glass tabs rise">
     <div class="tabbar"><button class="tab on" data-t="pasos">Paso a paso</button><button class="tab" data-t="tabla">Tabla</button><button class="tab" data-t="cmp">Comparar métodos</button></div>
     <div class="pane" id="p-pasos"></div>
-    <div class="pane hide" id="p-tabla"><table id="tabla"><thead><tr><th>k</th><th>xₖ₋₁</th><th>xₖ</th><th>xₖ₊₁</th><th>g(xₖ₊₁)</th><th>εa (%)</th></tr></thead><tbody></tbody></table></div>
-    <div class="pane hide" id="p-cmp"><div id="cmpb"></div><p class="mu">Newton-Raphson usa derivada numérica. La secante solo evalúa f una vez más por iteración.</p></div>
+    <div class="pane hide" id="p-tabla"><table id="tabla"><thead><tr><th>k</th><th data-tex="x_{k-1}"></th><th data-tex="x_k"></th><th data-tex="x_{k+1}"></th><th data-tex="g(x_{k+1})"></th><th data-tex="\varepsilon_a\,(\%)"></th></tr></thead><tbody></tbody></table></div>
+    <div class="pane hide" id="p-cmp"><div id="cmpb"></div><p class="mu">Newton-Raphson usa derivada numérica. La secante solo evalúa <span data-tex="f"></span> una vez más por iteración.</p></div>
   </div>
  </section>
 </div>
 </div>
 <script>
 const $=id=>document.getElementById(id);
-const COLE='g(f) = 1/√f + 2·log₁₀( (ε/D)/3.7 + 2.51/(Re·√f) ) = 0';
+const COLE='g(f)=\\frac{1}{\\sqrt{f}}+2\\log_{10}\\left(\\frac{\\varepsilon/D}{3.7}+\\frac{2.51}{Re\\sqrt{f}}\\right)=0'.replace('\\varepsilon/D','\\frac{\\varepsilon}{D}');
 const PRE=[['x^3 - 2*x - 5',1.5,2.7],['cos(x) - x',0.5,1],['exp(x) - 3*x',0,1],['x^2 - 2',1,2],['ln(x) + x - 2',1,2]];
 let modo='colebrook',last=null,cg,ce,mine=[];
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const sci=v=>(Math.abs(v)<1e-4&&v!==0)||Math.abs(v)>=1e4?v.toExponential(3):v.toFixed(6);
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-/* ondas en botones */
+/* ---------- LaTeX (KaTeX) ---------- */
+const tx=(s,disp)=>window.katex?katex.renderToString(s,{throwOnError:false,displayMode:!!disp}):esc(s);
+function mathAll(root=document){root.querySelectorAll('[data-tex]').forEach(el=>{el.innerHTML=tx(el.dataset.tex)})}
+function tn(v){ // número para sustituir: negativos entre paréntesis
+  if(v===0)return'0';const a=Math.abs(v);let s;
+  if(a<1e-4||a>=1e4){const[m,e]=v.toExponential(3).split('e');s=`${Math.abs(+m)}\\times10^{${+e}}`}else s=a.toFixed(6);
+  return v<0?`\\left(-${s}\\right)`:s}
+function tr(v){if(v===0)return'0';const a=Math.abs(v);if(a<1e-4||a>=1e4){const[m,e]=v.toExponential(3).split('e');return`${m}\\times10^{${+e}}`}return v.toFixed(6)}
+function t2(v){if(v===0)return'0';const a=Math.abs(v);if(a<1e-3||a>=1e4){const[m,e]=v.toExponential(2).split('e');return`${m}\\times10^{${+e}}`}return v.toFixed(4)}
+function toTex(e){try{let s=e.trim().replace(/\*\*/g,'^');
+  s=s.replace(/sqrt\(([^()]*)\)/g,'\\sqrt{$1}');
+  s=s.replace(/\b(sin|cos|tan|exp|ln|log10|atan|sinh|cosh|tanh|abs)\(/g,(m,f)=>({ln:'\\ln(',log10:'\\log_{10}(',abs:'\\operatorname{abs}('})[f]||'\\'+f+'(');
+  s=s.replace(/\^\(([^()]*)\)/g,'^{$1}').replace(/\^(-?[\w.]+)/g,'^{$1}');
+  const strip=g=>g.replace(/^\((.*)\)$/,'$1');
+  s=s.replace(/(\([^()]*\)|[\w.]+)\s*\/\s*(\([^()]*\)|[\w.]+)/g,(m,a,b)=>`\\frac{${strip(a)}}{${strip(b)}}`);
+  return s.replace(/\*/g,'\\cdot ').replace(/\bpi\b/g,'\\pi')}catch(_){return'\\text{f(x)}'}}
+
+/* ---------- ondas en botones ---------- */
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const r=b.getBoundingClientRect(),s=Math.max(r.width,r.height),p=document.createElement('span');
  p.className='ripple';p.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;b.appendChild(p);setTimeout(()=>p.remove(),600)});
 
-/* tema */
+/* ---------- tema ---------- */
 function tema(t,guardar){document.documentElement.dataset.theme=t;$('theme').textContent=t==='dark'?'☀':'☾';
  if(guardar)try{localStorage.setItem('tema',t)}catch(e){}if(last)graficas(last)}
 $('theme').onclick=()=>tema(document.documentElement.dataset.theme==='dark'?'light':'dark',true);
 
-/* modos */
+/* ---------- modos ---------- */
 function pill(){const b=$(modo==='colebrook'?'mCole':'mLibre');$('pill').style.width=b.offsetWidth+'px';$('pill').style.transform=`translateX(${b.offsetLeft-4}px)`}
-function eq(){$('eqv').textContent=modo==='colebrook'?COLE:'f(x) = '+$('expr').value}
+function eq(){$('eqv').innerHTML=tx(modo==='colebrook'?COLE:'f(x)='+toTex($('expr').value))}
 function setModo(m){modo=m;$('mCole').classList.toggle('on',m==='colebrook');$('mLibre').classList.toggle('on',m==='libre');
  $('colebrook').classList.toggle('hide',m!=='colebrook');$('libre').classList.toggle('hide',m==='colebrook');pill();eq()}
 $('mCole').onclick=()=>{setModo('colebrook');$('x0').value=0.015;$('x1').value=0.03};
 $('mLibre').onclick=()=>setModo('libre');$('expr').oninput=eq;window.onresize=pill;
 
-/* biblioteca de funciones */
+/* ---------- biblioteca de funciones ---------- */
 function usar(f,a,b){$('expr').value=f;if(a!=null){$('x0').value=a;$('x1').value=b}setModo('libre');resolver()}
 function lista(){
- $('presets').innerHTML=PRE.map((p,i)=>`<button type="button" class="chipb" data-p="${i}">${esc(p[0])}</button>`).join('');
+ $('presets').innerHTML=PRE.map((p,i)=>`<button type="button" class="chipb" data-p="${i}">${tx(toTex(p[0]))}</button>`).join('');
  $('minebox').classList.toggle('hide',!mine.length);
- $('mine').innerHTML=mine.map((p,i)=>`<button type="button" class="chipb mine" data-m="${i}">${esc(p[0])}<span class="x" data-d="${i}" title="Eliminar">×</span></button>`).join('');}
+ $('mine').innerHTML=mine.map((p,i)=>`<button type="button" class="chipb mine" data-m="${i}">${tx(toTex(p[0]))}<span class="x" data-d="${i}" title="Eliminar">×</span></button>`).join('');}
 document.addEventListener('click',e=>{
  const d=e.target.closest('[data-d]');if(d){mine.splice(+d.dataset.d,1);guardarLS();lista();e.stopPropagation();return}
- const p=e.target.closest('[data-p]');if(p){const x=PRE[+p.dataset.p];usar(...x)}
- const m=e.target.closest('[data-m]');if(m){const x=mine[+m.dataset.m];usar(...x)}
+ const p=e.target.closest('[data-p]');if(p){usar(...PRE[+p.dataset.p])}
+ const m=e.target.closest('[data-m]');if(m){usar(...mine[+m.dataset.m])}
  const t=e.target.closest('.tab');if(t){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b===t));
   ['pasos','tabla','cmp'].forEach(k=>$('p-'+k).classList.toggle('hide',k!==t.dataset.t))}});
 function guardarLS(){try{localStorage.setItem('misFunciones',JSON.stringify(mine))}catch(e){}}
@@ -206,7 +216,7 @@ $('save').onclick=()=>{const f=$('expr').value.trim();if(!f)return;
  if(!mine.some(m=>m[0]===f)){mine.unshift([f,$('x0').value,$('x1').value]);mine=mine.slice(0,12);guardarLS()}lista()};
 try{mine=JSON.parse(localStorage.getItem('misFunciones')||'[]')}catch(e){mine=[]}
 
-/* resolver */
+/* ---------- resolver ---------- */
 $('go').onclick=resolver;
 async function resolver(){
  const btn=$('go');btn.classList.add('cargando');$('msg').classList.add('hide');
@@ -219,21 +229,38 @@ async function resolver(){
  finally{btn.classList.remove('cargando')}}
 
 function contar(el,fin,dur=800){const t0=performance.now();(function f(t){const p=Math.min((t-t0)/dur,1);el.textContent=(fin*(1-Math.pow(1-p,3))).toFixed(6);if(p<1)requestAnimationFrame(f)})(t0)}
+
+/* cada iteración: dos bloques de tres líneas (fórmula, sustitución, resultado) */
+function cuerpo(r){
+ const xn=r.x_next;
+ const b1=`\\begin{aligned}x_{k+1}&=x_k-\\frac{g(x_k)\\,\\left(x_k-x_{k-1}\\right)}{g(x_k)-g(x_{k-1})}\\\\[6pt]
+  &=${tn(r.x)}-\\frac{${tn(r.fb)}\\,\\left(${tn(r.x)}-${tn(r.x_prev)}\\right)}{${tn(r.fb)}-${tn(r.fa)}}\\\\[6pt]
+  &=${tr(xn)}\\end{aligned}`;
+ const b2=`\\begin{aligned}\\varepsilon_a&=\\left|\\frac{x_{k+1}-x_k}{x_{k+1}}\\right|\\times100\\%\\\\[6pt]
+  &=\\left|\\frac{${tn(xn)}-${tn(r.x)}}{${tn(xn)}}\\right|\\times100\\%\\\\[6pt]
+  &=${r.ea.toFixed(6)}\\%\\end{aligned}`;
+ return tx(b1,true)+tx(b2,true)}
+function abrir(det){if(det.dataset.ok)return;det.dataset.ok=1;det.querySelector('.paso').innerHTML=cuerpo(last.filas[+det.dataset.i])}
+
 function pintar(d){
  last=d;$('out').classList.remove('hide');
  $('lbl').textContent=!d.ok?'Última aproximación (no es una raíz válida)':modo==='colebrook'?'Factor de fricción f':'Raíz aproximada';
- $('raiz').style.opacity=d.ok?1:.45;contar($('raiz'),d.raiz);$('resid').textContent=d.residuo.toExponential(2);
+ $('raiz').style.opacity=d.ok?1:.45;contar($('raiz'),d.raiz);$('resid').innerHTML=tx(t2(d.residuo));
  $('estado').textContent=d.ok?`Convergió en ${d.filas.length} iteraciones`:'No convergió';$('estado').classList.toggle('mal',!d.ok);
- const p=d.orden.length?d.orden[d.orden.length-1]:null;$('orden').textContent=d.ok?(p?`Orden estimado p ≈ ${p.toFixed(2)} (teórico 1.618)`:''):d.motivo;
- $('p-pasos').innerHTML=d.filas.map((r,i)=>`<details ${i===0?'open':''}><summary><span>Iteración ${r.k}</span><span class="mu">εa = ${r.ea.toExponential(2)} %</span></summary><div class="paso">xₖ₊₁ = xₖ − g(xₖ)·(xₖ − xₖ₋₁) / ( g(xₖ) − g(xₖ₋₁) )<br>xₖ₊₁ = ${sci(r.x)} − (${sci(r.fb)})·(${sci(r.x)} − ${sci(r.x_prev)}) / (${sci(r.fb)} − ${sci(r.fa)})<br><b>xₖ₊₁ = ${r.x_next.toFixed(6)}</b> · εa = |(xₖ₊₁ − xₖ)/xₖ₊₁|·100 = <b>${r.ea.toFixed(6)} %</b></div></details>`).join('');
+ const p=d.orden.length?d.orden[d.orden.length-1]:null;
+ $('orden').innerHTML=d.ok?(p?tx(`p\\approx${p.toFixed(2)}`)+' (teórico '+tx('p=\\varphi\\approx1.618')+')':''):esc(d.motivo);
+ $('p-pasos').innerHTML=d.filas.map((r,i)=>`<details data-i="${i}" ${i===0?'open':''}><summary><b>Iteración ${r.k}</b><span class="mu">${tx('\\varepsilon_a='+t2(r.ea)+'\\%')}</span></summary><div class="paso"></div></details>`).join('');
+ const d0=$('p-pasos').querySelector('details');if(d0)abrir(d0);
  $('tabla').tBodies[0].innerHTML=d.filas.map(r=>`<tr><td>${r.k}</td><td>${r.x_prev.toFixed(6)}</td><td>${r.x.toFixed(6)}</td><td>${r.x_next.toFixed(6)}</td><td>${r.g.toExponential(2)}</td><td>${r.ea.toFixed(6)}</td></tr>`).join('');
  const c=d.comparacion;
  $('cmpb').innerHTML=c?(()=>{const it=[['Secante',c.secante.iter,1],['Newton',c.newton.iter,0],['Bisección',c.biseccion.iter||0,0]],mx=Math.max(...it.map(x=>x[1]),1);
   return it.map(([n,v,s])=>`<div class="cmp ${s?'sel':''}"><span class="nm">${n}</span><div><div class="barra" style="width:${Math.max(v/mx*100,3)}%;${s?'':'opacity:.5'}"></div></div><span class="v">${v||'—'}</span></div>`).join('')})():'<p class="mu">La comparación está disponible cuando el método converge.</p>';
  graficas(d)}
+$('p-pasos').addEventListener('toggle',e=>{if(e.target.open)abrir(e.target)},true);
 
+const sup=n=>String(n).replace(/-/g,'⁻').replace(/\d/g,c=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[c]);
 function graficas(d){
- Chart.defaults.font.family='"IBM Plex Sans",system-ui,sans-serif';Chart.defaults.color=css('--mu');
+ Chart.defaults.font.family='Inter,system-ui,sans-serif';Chart.defaults.color=css('--mu');
  const G=css('--line'),A=css('--acc'),B=css('--bad'),Y=css('--gold'),T=css('--ink');
  const ds=[{label:'f(x)',data:d.curva,showLine:true,borderColor:A,pointRadius:0,borderWidth:3,tension:.3}];
  [B,Y,T].forEach((c,i)=>{const r=d.filas[i];if(r)ds.push({label:'Secante '+(i+1),data:[{x:r.x_prev,y:r.fa},{x:r.x_next,y:0}],showLine:true,borderColor:c,borderDash:[6,4],pointRadius:3,borderWidth:1.6})});
@@ -242,9 +269,10 @@ function graficas(d){
  cg=new Chart($('cgeo'),{type:'scatter',data:{datasets:ds},options:{maintainAspectRatio:false,animation:{duration:500},scales:{x:{title:{display:true,text:'x'},grid:{color:G}},y:{title:{display:true,text:'f(x)'},grid:{color:G}}},plugins:{legend:{labels:{boxWidth:10,usePointStyle:true}}}}});
  if(ce)ce.destroy();
  ce=new Chart($('cerr'),{type:'line',data:{datasets:[{label:'εa (%)',data:d.filas.map(r=>({x:r.k,y:Math.max(r.ea,1e-12)})),borderColor:A,backgroundColor:A,pointRadius:5,borderWidth:3,tension:.25}]},
-  options:{maintainAspectRatio:false,parsing:false,animation:{duration:500},scales:{x:{type:'linear',title:{display:true,text:'Iteración k'},ticks:{stepSize:1},grid:{color:G}},y:{type:'logarithmic',title:{display:true,text:'εa (%)'},grid:{color:G}}},plugins:{legend:{display:false}}}});}
+  options:{maintainAspectRatio:false,parsing:false,animation:{duration:500},scales:{x:{type:'linear',title:{display:true,text:'Iteración k'},ticks:{stepSize:1},grid:{color:G}},y:{type:'logarithmic',title:{display:true,text:'εa (%)'},grid:{color:G},ticks:{callback:v=>{const e=Math.log10(v);return Math.abs(e-Math.round(e))<1e-9?'10'+sup(Math.round(e)):''}}}},plugins:{legend:{display:false}}}});}
 
-tema(document.documentElement.dataset.theme,false);lista();setModo('colebrook');resolver();
+window.addEventListener('load',()=>{mathAll();lista();eq()});
+tema(document.documentElement.dataset.theme,false);setModo('colebrook');resolver();
 </script>
 </body>
 </html>
