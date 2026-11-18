@@ -83,8 +83,8 @@ def colebrook(re, rug_rel):
     """g(f) = 1/sqrt(f) + 2*log10( (e/D)/3.7 + 2.51/(Re*sqrt(f)) )  ->  g(f)=0."""
     if re <= 4000:
         raise ErrorNumerico("Colebrook-White aplica a flujo turbulento: Re > 4000.")
-    if rug_rel < 0:
-        raise ErrorNumerico("La rugosidad relativa debe ser ≥ 0.")
+    if rug_rel < 0 or rug_rel > 0.05:
+        raise ErrorNumerico("La rugosidad relativa ε/D debe estar entre 0 y 0.05 (rango del diagrama de Moody).")
 
     def g(f):
         if f <= 0:
